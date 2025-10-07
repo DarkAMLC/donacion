@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Donaciones en Cripto</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #f9f9f9; margin: 0; padding: 0; }
+  .container { max-width: 900px; margin: auto; padding: 20px; }
+  h1 { text-align: center; margin-bottom: 20px; }
+  input, textarea, button { padding: 8px; margin: 4px 0; width: 100%; box-sizing: border-box; }
+  .wallet { border: 1px solid #ccc; border-radius: 6px; padding: 10px; margin: 5px 0; display: flex; justify-content: space-between; align-items: center; }
+  .wallet-info { flex: 1; }
+  .wallet-buttons button { margin-left: 5px; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Donaciones en Cripto</h1>
+
+  <div>
+    <input type="text" id="search" placeholder="Buscar coin o símbolo...">
+  </div>
+
+  <div id="walletList"></div>
+
+  <div id="selectedWallet" class="hidden">
+    <h3>Dirección seleccionada</h3>
+    <textarea id="addressDisplay" rows="3" readonly></textarea>
+    <button onclick="copyAddress()">Copiar dirección</button>
+  </div>
+</div>
+
+<script>
+let wallets = [
+{ coin: 'Bitcoin', symbol: 'BTC', network: 'Native', address: 'bc1q4pyrpjgpjx6pw9y3u7utn5j6ktw9wj963r06mn' },{ coin: 'pi network', symbol: 'PI', network: 'SCP', address: 'GC62NQBPINDJJULPRCE67AJEEKBQYFVSVI27LWRUJ6GXYM6T3UBOBEDH' },{ coin: 'Kaito', symbol: 'KAITO', network: 'BASE', address: '0xEb130e3842ADc16D54e9a79129E157EF8bfDd998' },{ coin: 'TRON', symbol: 'TRX', network: 'TRON', address: 'TKCM1ateF9EvEdQPNUJA94JDcdy1AjYEVZ' },{ coin: 'Solana', symbol: 'SOL', network: 'Solana', address: 'Bs8LyvUAgyztUSsRDuLtVEUgUoAVnyqJ5ZXTDYJVtJPf' },{ coin: 'Dogecoin', symbol: 'DOGE', network: 'DOGE', address: 'D7qw8GbE63E2QQdAb5yFtgMcZdnqgu8Auq' },{coin: 'Sui', symbol: 'SUI', network: 'Sui', address: '0x784c3052d46790ae03e94e13e3bba85b93681e4ef5d83742e9923d3c448351c4' },{ coin: 'Avalanche', symbol: 'AVAX', network: 'C-Chain', address: '0xEb130e3842ADc16D54e9a79129E157EF8bfDd998' },{ coin: 'Stellar', symbol: 'XLM', network: 'Stellar', address: 'GANXP45C7SQTPUDGBC7HATIMHHRJB2EO7DXI4V253647UEZKVR533CTJ' },{ coin: 'Litecoin', symbol: 'LTC', network: 'LTC', address: 'ltc1qxgg2kfv4u4yjf4uxvmxzlt5rw4e0getg2nqs8z' },{ coin: 'Binance Coin', symbol: 'BNB', network: 'BNB Chain', address: '0xEb130e3842ADc16D54e9a79129E157EF8bfDd998' },{ coin: 'Cardano', symbol: 'ADA', network: 'Cardano', address: 'addr1q802pd4ktya370j8xlrzp73h2lqkxz76ru5tjq7lhf46l0lmq2zm5f2mmn5pa2made628qdn5yvenwmtce7x6gt00cwqwek434' },{ coin: 'Algorand', symbol: 'ALGO', network: 'Algorand', address: '7MZKHWDBJA6CJ5IAPIASFUGUZ2PD5TIBRIE7URGDAMWGD6CGZRPUDESEAI' },{ coin: 'Polkadot', symbol: 'DOT', network: 'Polkadot', address: '12LGJfFqzbr1spPihNMFcRonUst5TpCSHbSn4WaGitx5gF5A' },{ coin: 'VeChain', symbol: 'VET', network: 'VeChain', address: '0x2a067FF1cC40F3c4eC53459675F12b6fBC03115c' },{ coin: 'Filecoin', symbol: 'FIL', network: 'FIL', address: 'f1bartvfbytszpyo7eq24rzbkl2ov3dk5dhi7xfha' },{ coin: 'Zcash', symbol: 'ZEC', network: 'ZEC', address: 't1HvV6HbQqxW3panK2JtbE7PizxmNLjXqNy' },{ coin: 'Arbitrum', symbol: 'ARB', network: 'Arbitrum', address: '0xEb130e3842ADc16D54e9a79129E157EF8bfDd998' },
+
+
+
+
+
+{ coin: 'Ethereum', symbol: 'ETH', network: 'ERC20', address: '0xAbC12345ExampleAddress000000000' },
+{ coin: 'Ethereum', symbol: 'ETH', network: 'Arbitrum', address: '0xArb12345ExampleAddress0000000' },
+{ coin: 'Ethereum', symbol: 'ETH', network: 'Optimism', address: '0xOpt12345ExampleAddress0000000' },
+
+
+
+{ coin: 'Tether', symbol: 'USDT', network: 'ERC20', address: '0xUSDT_ERC20_ExampleAddress000000' },
+{ coin: 'Tether', symbol: 'USDT', network: 'TRC20', address: 'TExaMpLeTrc20Address000000000000' },
+{ coin: 'Tether', symbol: 'USDT', network: 'Solana', address: 'SoUSDTExampleAddress0000000000' },
+{ coin: 'Tether', symbol: 'USDT', network: 'Polygon', address: '0xUSDT_Polygon_ExampleAddress0000' },
+
+
+
+
+{ coin: 'USD Coin', symbol: 'USDC', network: 'ERC20', address: '0xUSDC_ERC20_ExampleAddress000000' },
+{ coin: 'USD Coin', symbol: 'USDC', network: 'Polygon', address: '0xUSDC_Polygon_ExampleAddress0000' },
+{ coin: 'USD Coin', symbol: 'USDC', network: 'Optimism', address: '0xUSDC_Optimism_ExampleAddress000' },
+
+
+
+{ coin: 'Chainlink', symbol: 'LINK', network: 'ERC20', address: '0xLINK_ERC20_ExampleAddress00000' },
+{ coin: 'Chainlink', symbol: 'LINK', network: 'Polygon', address: '0xLINK_Polygon_ExampleAddress000' },
+{ coin: 'Chainlink', symbol: 'LINK', network: 'Arbitrum', address: '0xLINK_Arbitrum_ExampleAddress0' },
+
+
+{ coin: 'Uniswap', symbol: 'UNI', network: 'ERC20', address: '0xUNI_ERC20_ExampleAddress000000' },
+{ coin: 'Uniswap', symbol: 'UNI', network: 'Arbitrum', address: '0xUNI_Arbitrum_ExampleAddress000' },
+{ coin: 'Uniswap', symbol: 'UNI', network: 'Optimism', address: '0xUNI_Optimism_ExampleAddress00' },
+
+
+
+{ coin: 'Monero', symbol: 'XMR', network: 'XMR', address: '4ExampleMoneroAddress000000000' },
+{ coin: 'Hedera', symbol: 'HBAR', network: 'Hedera', address: '0.0.1234567890' },
+{ coin: 'Terra', symbol: 'LUNA', network: 'Terra', address: 'terra1ExampleAddress00000000' },
+{ coin: 'Elrond', symbol: 'EGLD', network: 'Elrond', address: 'erd1ExampleAddress0000000000' },
+{ coin: 'Optimism', symbol: 'OP', network: 'Optimism', address: '0xOP_ExampleAddress0000000' },
+];
+
+const walletList = document.getElementById('walletList');
+const selectedDiv = document.getElementById('selectedWallet');
+const addressDisplay = document.getElementById('addressDisplay');
+
+function renderWallets() {
+  walletList.innerHTML = '';
+  const filter = document.getElementById('search').value.toLowerCase();
+
+  wallets.filter(w => w.coin.toLowerCase().includes(filter) || w.symbol.toLowerCase().includes(filter))
+    .forEach(w => {
+      const div = document.createElement('div');
+      div.className = 'wallet';
+      div.innerHTML = `<div class='wallet-info'><strong>${w.coin} (${w.symbol})</strong><br><small>${w.network}</small></div>
+                       <div class='wallet-buttons'><button onclick='selectWallet("${w.address}")'>Seleccionar</button></div>`;
+      walletList.appendChild(div);
+    });
+}
+
+function selectWallet(addr) {
+  selectedDiv.classList.remove('hidden');
+  addressDisplay.value = addr;
+}
+
+function copyAddress() {
+  addressDisplay.select();
+  document.execCommand('copy');
+  alert('Dirección copiada');
+}
+
+document.getElementById('search').addEventListener('input', renderWallets);
+
+renderWallets();
+</script>
+</body>
+</html>
